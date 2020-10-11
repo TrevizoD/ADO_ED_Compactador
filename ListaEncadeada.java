@@ -85,22 +85,36 @@ public class ListaEncadeada {
         return listaLinha;
     }
     
-    /*public void escreveArquivo(String arquivo){
+    public void escreveArquivo(){
         String arquivoDeSaida = "saida_trabalho1.txt";
+        String arquivoCompactado = "";
+        
+        //inverte os nós da lista encadeada, 
+        //para que a ordem corresponda com o arquivo original
+        this.inverteNos();
+        
+        No temp = this.getIni();
+        
+        //insere os elementos da lista encadeada em uma String,
+        //para que a saída do arquivo compactado seja gerada
+        while(temp != null){
+            arquivoCompactado += temp.getElemento() + " ";
+            temp = temp.getProx();
+        }
 
         try {
             FileWriter fileWriter = new FileWriter(arquivoDeSaida);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             
-            bufferedWriter.write();
+            bufferedWriter.write(arquivoCompactado);
 
             // feche o arquivo
             bufferedWriter.close();
         }
         catch(IOException ex) {
             System.out.println("Erro de escrita em '" + arquivoDeSaida + "'");
-        }    
-    }*/
+        }   
+    }
         
     /*********************************************************************/
     public void insereInicio(String elemento){
@@ -134,6 +148,22 @@ public class ListaEncadeada {
             cont++;
         }
         return cont;
+    }
+    
+    public void inverteNos() {
+        No temp = ini;
+        No anterior = null;
+        No posterior = null;
+
+        while (temp.getProx() != null) {
+            posterior = anterior;
+            anterior = temp;
+            temp = temp.getProx();
+            anterior.setProx(posterior);
+        }
+        
+        ini = temp;
+        temp.setProx(anterior); 
     }
     
 }

@@ -17,14 +17,14 @@ public class Compactador {
         //lista compactada: palavras únicas e sem caracteres especiais/ pontuação
         System.out.println(compactada);
         
-        //lista descompactada
-        //compactada.escreveArquivo("entrada_trabalho1.txt");
-                
-        //lista de palavras repetidas
-        //System.out.println(compactada.repetidas());
+        //saída de arquivo da lista compactada
+        //verificar se o arquivo "saida_trabalho1.txt" foi gerado na pasta do projeto
+        compactada.escreveArquivo();
         
-        //lista compactada: palavras únicas, sem caracteres especiais/ pontuação 
-        //e com posição de palavras repetidas
-        //System.out.println(compactada.substitui(compactada.repetidas()));
+        //(próximos passos: 1. ler o arquivo de saída (como foi feito com o original)
+        //                  2. fazer a substituição dos números pelas palavras correspondentes
+        //                  3. imprimir aqui na tela, para verificar se tudo ok
+        //                  4. inverter a ordem dos nós para corresponder com o arquivo original
+        
     }
 }
