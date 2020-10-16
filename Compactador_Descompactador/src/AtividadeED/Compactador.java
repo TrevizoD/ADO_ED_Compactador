@@ -33,35 +33,100 @@ public class Compactador {
                 Pattern pattern = Pattern.compile("[!, --?'.@]+");
                 Matcher matcher = pattern.matcher(palavraAtual);
                 String caractereEspecial = "";
+                String palavraDepoisCaractereEspecial = "";
                 
                 //Caso a palavra atual possua algum caractere especial
                 if (matcher.find()) {
                     //Divide a palavra atual e o seu caractere especial
-                    String[] palavraAtualArray = palavraAtual.split("[!, -?'.@]+");
+                    String[] palavraAtualArray = palavraAtual.split("[!, --?'.@]+");
                     
                     //Captura a palavra e o caractere especial
                     try {
                         palavraAtual = palavraAtualArray[0];
                         caractereEspecial = matcher.group();
+                        
+                        //Tenta capturar a palavra que vem depois do caractere especial, caso exista
+                        try {
+                            palavraDepoisCaractereEspecial = palavraAtualArray[1];
+                        } catch (ArrayIndexOutOfBoundsException ex) {
+                            //Pass
+                        }
                     } catch (ArrayIndexOutOfBoundsException ex) {
-                        //Caso caia no catch, quer dizer que a palavra atual somente possui caracteres especiais
-                        //portanto adicionamos direto no arquivo compactado
-                        escreverArquivo(arquivoCompactado, palavraAtual + " ");
-                        continue;
+                        //Caso a palavra atual nao possua um caractere especial
+                        //Pass
                     }
                 }
                 
-                int indicePalavraJaCompactada = palavrasCompactadas.buscaElementoRetornaIndice(palavraAtual);
+                //Verifica se a palavra atual ja foi compactada ou nao
+                int indicePalavraAtual = palavrasCompactadas.buscaElementoRetornaIndice(palavraAtual);
                 
-                //Caso essa palavra ja tenha  sido compactada, inserir no arquivo final o indice dela na ListaEncadeada
-                if (indicePalavraJaCompactada > 0){
-                    escreverArquivo(arquivoCompactado, indicePalavraJaCompactada + caractereEspecial + " ");
-                } else {
-                    //Caso seja a primeira vez que essa palavra aparece no arquivo,
-                    //inserir a propria palavra no arquivo final e adiciona ela na ListaEncadeada
-                    escreverArquivo(arquivoCompactado, palavraAtual + caractereEspecial + " ");
-                    palavrasCompactadas.insereInicio(palavraAtual);
+                //Verifica as condicoes
+                boolean palavraPossuiCaractereEspecial = !caractereEspecial.equals("");
+                boolean palavraJaFoiCompactada = indicePalavraAtual > 0;
+                boolean palavraPossuiOutraPalavraDepoisCaractereEspecial = !palavraDepoisCaractereEspecial.equals("");
+                
+                //Caso a palavra atual ja tenha sido compactada e nao possua caracter especial
+                if (palavraJaFoiCompactada && !palavraPossuiCaractereEspecial) {
+                    escreverArquivo(arquivoCompactado, indicePalavraAtual + " ");
+                    continue;
                 }
+                
+                //Caso a palavra atual ja tenha sido compactada porem possui caractere especial
+                if (palavraJaFoiCompactada && palavraPossuiCaractereEspecial) {
+                    
+                    //Verifica se existe alguma palavra depois do caractere especial
+                    if (palavraPossuiOutraPalavraDepoisCaractereEspecial) {
+                        //Verifica se essa outra palavra ja foi compactada
+                        int indiceSegundaPalavra = palavrasCompactadas.buscaElementoRetornaIndice(palavraDepoisCaractereEspecial);
+                        
+                        //Caso a segunda palavra ja tenha sido compactada
+                        if (indiceSegundaPalavra > 0) {
+                            escreverArquivo(arquivoCompactado, indicePalavraAtual + caractereEspecial + indiceSegundaPalavra + " ");
+                            continue;
+                        }
+                        
+                        //Caso a segunda palavra nao tenha sido compactada, colocar direto no arquivo e adicionar na ListaEncadeada
+                        escreverArquivo(arquivoCompactado, indicePalavraAtual + caractereEspecial + palavraDepoisCaractereEspecial + " ");
+                        palavrasCompactadas.insereInicio(palavraDepoisCaractereEspecial);
+                        continue;
+                    }
+                    
+                    escreverArquivo(arquivoCompactado, indicePalavraAtual + caractereEspecial + " ");
+                    continue;
+                }
+                
+                //Adiciona a primeira palavra na ListEncadeada
+                palavrasCompactadas.insereInicio(palavraAtual);
+                
+                //Caso a palavra atual ainda nao tenha sido compactada e nao possua caractere especial
+                //colocar direto no arquivo e adicionar na ListaEncadeada
+                if (!palavraPossuiCaractereEspecial) {
+                    escreverArquivo(arquivoCompactado, palavraAtual + " ");
+                    continue;
+                }
+                
+                //Caso a palavra atual ainda nao tenha sido compactada e possua caractere especial
+                //Verifica se existe alguma palavra depois do caractere especial
+                if (palavraPossuiOutraPalavraDepoisCaractereEspecial) {
+                    //Verifica se essa outra palavra ja foi compactada
+                    int indiceSegundaPalavra = palavrasCompactadas.buscaElementoRetornaIndice(palavraDepoisCaractereEspecial);
+
+                    //Caso a segunda palavra ja tenha sido compactada
+                    if (indiceSegundaPalavra > 0) {
+                        escreverArquivo(arquivoCompactado, palavraAtual + caractereEspecial + indiceSegundaPalavra + " ");
+                        continue;
+                    }
+                    
+                    //Caso a segunda palavra nao tenha sido compactada e nao tenha caracter especial
+                    //colocar direto no arquivo e adicionar na ListaEncadeada
+                    escreverArquivo(arquivoCompactado, palavraAtual + caractereEspecial + palavraDepoisCaractereEspecial + " ");
+                    palavrasCompactadas.insereInicio(palavraDepoisCaractereEspecial);
+                    continue;
+                }
+                
+                //Caso a palavra atual ainda nao tenha sido compactada, mas possui um caractere especial
+                escreverArquivo(arquivoCompactado, palavraAtual + caractereEspecial + " ");
+                palavrasCompactadas.insereInicio(palavraDepoisCaractereEspecial);
             }
             
             //Pular a linha no arquivo final
