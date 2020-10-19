@@ -49,6 +49,7 @@ public class Compactador {
                         try {
                             palavraDepoisCaractereEspecial = palavraAtualArray[1];
                         } catch (ArrayIndexOutOfBoundsException ex) {
+                            //Caso a palavra atual nao possua uma palavra depois do caractere especial
                             //Pass
                         }
                     } catch (ArrayIndexOutOfBoundsException ex) {
